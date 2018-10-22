@@ -6,7 +6,6 @@
 
 package controller;
 
-import model.Jogador;
 import java.util.Map;
 import java.util.Set;
 import model.Casa;
@@ -23,8 +22,7 @@ import model.Xadrez_Fileiras;
 public class ArbitroPartida {
     private static ArbitroPartida instancia;
     private Tabuleiro tabuleiro;
-    private Jogador brancas;
-    private Jogador pretas;
+    
     private boolean vezBrancas;
     private boolean brancaVenceu;
     private boolean pretaVenceu;
@@ -33,8 +31,7 @@ public class ArbitroPartida {
 
     private ArbitroPartida() {
         tabuleiro = Tabuleiro.getInstancia();
-        brancas = new Jogador();
-        pretas = new Jogador();
+        
     }
 
     public static ArbitroPartida getInstancia() {
@@ -63,7 +60,7 @@ public class ArbitroPartida {
         Set<Casa> set = mapa.keySet();
         
         for (Casa c : set){           
-            switch ( c.X ){
+            switch ( c.getX() ){
                 case Xadrez_Fileiras.PRIMEIRA:
                     if ( c.Y == Xadrez_Colunas.A || c.Y == Xadrez_Colunas.H ){
                         mapa.put( c, PecaFactory.criarTorre( c.X, c.Y, Xadrez_Cores.BRANCA ) ); 

@@ -9,7 +9,6 @@ package view;
 import controller.Xadrez_Constantes;
 import java.awt.Color;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 /**
@@ -75,7 +74,7 @@ public class CasaView extends JButton {
     public int getColuna() {
         return coluna;
     }
-
+    
     @Override
     public boolean isSelected() {
         return false;

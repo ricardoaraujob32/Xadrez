@@ -9,8 +9,14 @@ package model;
 /**
  *
  * @author ricardobalduino
+ * @version 
+ * @since 
  */
-public class Rei extends PecaComPrimeiroMovimento implements IPodeFazerRoque {
+public class Rei extends PecaQuePodeFazerRoque {
+    
+    /**
+     * 
+     */
     private boolean emXeque;
 
     /**
@@ -19,64 +25,82 @@ public class Rei extends PecaComPrimeiroMovimento implements IPodeFazerRoque {
      * @param y
      * @param id_jogador
      */
-    public Rei(int x, int y, int id_jogador)
+    public Rei()
     {
-        super(x, y, id_jogador);
-        this.emXeque = false;
+        emXeque = false;
     }
-            
+        
+    /**
+     * 
+     * @param b 
+     */
     public void setEmXeque(boolean b){
-        this.emXeque = b;
+        emXeque = b;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public boolean isEmXeque(){
         return emXeque;
     }
     
+    /**
+     * 
+     * @param x
+     * @param y 
+     */
     @Override
     public void movimentar(int x, int y)
     {
-        super.movimentar(x, y);
-        
-        if ( isPrimeiroMovimento() ){
-            setNotPrimeiroMovimento();
+        if ( validaMovimento(x, y) ) {
+            super.movimentar(x, y);
+
+            if ( isPrimeiroMovimento() ) {
+                setNaoEhPrimeiroMovimento();
+                setNaoPodeFazerRoque();
+            }
         }
     }
     
+    /**
+     *
+     * @param x
+     * @param y
+     */
+    @Override
     public void roque(int x, int y)
     {
         if ( validaRoque(x, y) ){
-            setX(x);
-            setY(y);
-            
-            if ( isPrimeiroMovimento() ){
-                setNotPrimeiroMovimento();
-            }
-            
-            setChanged();
+            coord.setY(y);
         }
     }
 
+    /**
+     * 
+     * @param destX
+     * @param destY
+     * @return 
+     */
     @Override
     public boolean validaMovimento(int destX, int destY) {
-        boolean valido = true;
-        
         if ( !t.validaLimites(destX, destY) ){
-            valido = false;
-//            throw new ArrayIndexOutOfBoundsException("Tentou movimentar para fora do tabuleiro.");
+            return false;
         }
         
-        int deslocX = destX - x;
-        int deslocY = destY - y;
+        int deslocX = calculaDeslocamento(destX, "x");
+        int deslocY = calculaDeslocamento(destY, "y");
         
-        if (deslocX > 1 || deslocX < -1 || deslocY > 1 || deslocY < -1){
-            valido = false;
-//            throw new JogadaIlegalException("O rei só pode se mover uma casa por vez");
-        }
-        
-        return valido;
+        return validaDeslocamento(deslocX, deslocY);
     }
     
+    /**
+     * 
+     * @param destX
+     * @param destY
+     * @return 
+     */
     public boolean validaRoque(int destX, int destY){
         boolean valido = true;
         
@@ -95,8 +119,8 @@ public class Rei extends PecaComPrimeiroMovimento implements IPodeFazerRoque {
 //            throw new JogadaIlegalException("Não é possível fazer o roque enquanto o rei estiver em xeque.");
         }
         
-        if (ID_JOGADOR == Xadrez_Cores.BRANCA && destX != 0 ||
-                ID_JOGADOR == Xadrez_Cores.PRETA && destX != 7){
+        if ( isBranca() && destX != Xadrez_Fileiras.PRIMEIRA ||
+                isPreta() && destX != Xadrez_Fileiras.OITAVA){
             valido = false;
 //            throw new JogadaIlegalException("Fileira inválida para o roque.");
         }
@@ -109,14 +133,37 @@ public class Rei extends PecaComPrimeiroMovimento implements IPodeFazerRoque {
         return valido;
     }
 
-    @Override
-    public void roque() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    /**
+     * 
+     * @return 
+     */
     @Override
     public boolean podeFazerRoque() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return isPrimeiroMovimento() && !isEmXeque();
+    }
+ 
+    /**
+     * 
+     * @param n
+     * @param dir
+     * @return 
+     */
+    private int calculaDeslocamento(int n, String dir){
+        return "x".equals(dir) ? n - coord.getX() : 
+                    "y".equals(dir) ? n - coord.getY() : 0;
     }
     
+    /**
+     * 
+     * @param deslocX
+     * @param deslocY
+     * @return 
+     */
+    private boolean validaDeslocamento(int deslocX, int deslocY){
+        return deslocX <= 1 && deslocX >= -1 && deslocY <= 1 && deslocY >= -1;
+    }
+    
+    private boolean validaDeslocRoque(int desloc){
+        return desloc == 2 || desloc == -2;
+    }
 }

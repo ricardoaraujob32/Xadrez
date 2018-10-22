@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-package controller;
+package view;
 
-import view.CasaView;
+import controller.ArbitroPartida;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -70,7 +70,7 @@ public class CasaEventHandler implements ActionListener {
                 
                 limparCoordenadas();
                     
-                break;
+            break;
             // ação inválida
             default:
                 throw new IllegalArgumentException("Ação desconhecida.");

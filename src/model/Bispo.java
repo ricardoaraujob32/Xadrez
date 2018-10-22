@@ -6,27 +6,15 @@
 
 package model;
 
-import java.awt.Point;
-import java.util.NoSuchElementException;
-import java.util.Queue;
+import java.util.Iterator;
 
 /**
  *
  * @author Ricardo de Araújo Balduino
+ * @version 
+ * @since 
  */
 public class Bispo extends Peca {
-
-    /**
-     * 
-     * @param x
-     * @param y
-     * @param id_jogador 
-     */
-    
-    public Bispo(int x, int y, int id_jogador)
-    {
-        super(x, y, id_jogador);
-    } 
 
     /**
      * 
@@ -37,31 +25,24 @@ public class Bispo extends Peca {
     
     @Override
     public boolean validaMovimento(int destX, int destY) {
-        // se a peça tentar se mover para fora do tabuleiro
-        if (!t.validaLimites(destX, destY)){
+    // se a peça tentar se mover para fora do tabuleiro
+        if ( !t.validaLimites(destX, destY) ){
             return false;
-//            throw new ArrayIndexOutOfBoundsException("Tentou movimentar para fora do tabuleiro.");
-        }
-                
-        // obtém lista de casas possíveis para se mover
-        Queue<Point> queue = t.getCasasDiagonais(this.x, this.y);
-        Point p = new Point();
-        
-        while ( !queue.isEmpty() ){
-            try {
-                p = queue.remove();
-                
+        } else {
+            // obtém lista de casas possíveis para se mover
+            Iterator<Coordenada> iterator = t.getCasasDiagonais( coord.getX(), coord.getY() ).iterator();
+            Coordenada c;
+
+            while ( iterator.hasNext() ) {
+                c = iterator.next();
+
                 // se foi a escolhida, posiciona a peça lá
-                if (p.getX() == destX && p.getY() == destY){
+                if ( c.getX() == destX && c.getY() == destY ) {
                     return true;
                 }
-            } catch (NoSuchElementException e) {
-                e.printStackTrace();
             }
         }
-           
+              
         return false;
-        // Se a casa não está na diagonal do bispo, informar o erro
-//        throw new JogadaIlegalException("Um bispo só pode se mover em diagonal.");
     }
 }

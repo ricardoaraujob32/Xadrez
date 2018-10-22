@@ -6,10 +6,10 @@
 
 package model;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
@@ -28,6 +28,42 @@ public class Tabuleiro extends Observable {
      * 
      */
     private Map<Casa,Peca> mapa;
+    
+    /**
+     * Quantos peões cada jogador tem.
+     * Deve começar com 8.
+     */
+    private int numPeoes;
+    
+    /**
+     * Quantos cavalos cada jogador tem.
+     * Deve começar com 2.
+     */
+    private int numCavalos;
+    
+    /**
+     * Quantos bispos cada jogador tem.
+     * Deve começar com 2.
+     */
+    private int numBispos;
+    
+    /**
+     * Quantas torres cada jogador tem.
+     * Deve começar com 2.
+     */
+    private int numTorres;
+    
+    /**
+     * Quantas damas cada jogador tem.
+     * Deve começar com 1.
+     */
+    private int numDamas;
+    
+    /**
+     * Quantos reis cada jogador tem.
+     * Deve começar com 1.
+     */
+    private final int numReis;
     
     /**
      * 
@@ -97,8 +133,8 @@ public class Tabuleiro extends Observable {
         int cor = -1;
         
         for (Casa c : set){
-            if (c.X == x && c.Y == y){
-                cor =  c.COR;
+            if ( c.getX() == x && c.getY() == y ){
+                cor =  c.getCor();
             }
         }
         
@@ -113,7 +149,7 @@ public class Tabuleiro extends Observable {
      * @return
      * @throws ArrayIndexOutOfBoundsException 
      */
-    public Collection<Point> getCasasFileira(int x, int y)
+    public Collection<Coordenada> getCasasFileira(int x, int y) throws ArrayIndexOutOfBoundsException
     {
         // Valida se está dentro dos limites
           if ( !validaLimites(x, y) ) {
@@ -121,17 +157,18 @@ public class Tabuleiro extends Observable {
           }
           
 //          Cria uma fila de coordenadas com no máximo 7 elementos
-          Collection<Point> lista = new ArrayList<>(7);
+          Collection<Coordenada> lista = new ArrayList<>(7);
           
 //          Guarda um par de coordenadas em um ponto
-          Point p = new Point();          
+          Coordenada c = new Coordenada();          
           
           // Obtém as casas na mesma fileira à esquerda
           int auxY = y - 1;                  
                     
-          while (validaLimites(x, auxY)){
-              p.setLocation(x, auxY);
-              lista.add(p);
+          while ( validaLimites(x, auxY) ){
+              c.setX(x);
+              c.setY(auxY);
+              lista.add(c);
               auxY--;
           }
           
@@ -139,8 +176,9 @@ public class Tabuleiro extends Observable {
           auxY = y + 1;
                     
           while (validaLimites(x, auxY)){
-              p.setLocation(x, auxY);
-              lista.add(p);
+              c.setX(x);
+              c.setY(auxY);
+              lista.add(c);
               auxY++;
           }
                     
@@ -154,7 +192,7 @@ public class Tabuleiro extends Observable {
      * @return
      * @throws ArrayIndexOutOfBoundsException 
      */
-    public Collection<Point> getCasasColuna(int x, int y)
+    public Collection<Coordenada> getCasasColuna(int x, int y) throws ArrayIndexOutOfBoundsException
     {
         // Valida se está dentro dos limites
           if ( !validaLimites(x, y) ) {
@@ -162,17 +200,18 @@ public class Tabuleiro extends Observable {
           }
           
 //          Cria uma fila de coordenadas com no máximo 7 elementos
-          Collection<Point> lista = new ArrayList<>(7);
+          Collection<Coordenada> lista = new ArrayList<>(7);
           
 //          Guarda um par de coordenadas em um ponto
-          Point p = new Point(); 
+          Coordenada c = new Coordenada(); 
           
           // Obtém as casas na mesma coluna abaixo
           int auxX = x - 1;
           
           while (validaLimites(auxX, y)){
-              p.setLocation(auxX, y);
-              lista.add(p);
+              c.setX(auxX);
+              c.setY(y);
+              lista.add(c);
               auxX--;
           }
           
@@ -180,8 +219,9 @@ public class Tabuleiro extends Observable {
           auxX = x + 1;          
           
           while (validaLimites(auxX, y)){
-              p.setLocation(auxX, y);
-              lista.add(p);
+              c.setX(auxX);
+              c.setY(y);
+              lista.add(c);
               auxX++;
           }
                     
@@ -195,7 +235,7 @@ public class Tabuleiro extends Observable {
      * @return
      * @throws ArrayIndexOutOfBoundsException 
      */
-    public Collection<Point> getCasasDiagonais(int x, int y)
+    public Collection<Coordenada> getCasasDiagonais(int x, int y) throws ArrayIndexOutOfBoundsException
     {
         // Valida se está dentro dos limites
           if ( !validaLimites(x, y) ) {
@@ -203,18 +243,19 @@ public class Tabuleiro extends Observable {
           }
           
 //          Cria uma fila de coordenadas com no máximo 16 elementos
-          Collection<Point> lista = new ArrayList<>();
+          ArrayList<Coordenada> lista = new ArrayList<>();
           
 //          Guarda um par de coordenadas em um ponto
-          Point p = new Point();
+          Coordenada c = new Coordenada();
           
           // Obtém as casas na diagonal acima à esquerda
           int auxX = x + 1;
           int auxY = y - 1;
                     
           while (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
               auxX++;
               auxY--;
           }                        
@@ -224,8 +265,9 @@ public class Tabuleiro extends Observable {
           auxY = y - 1;
           
           while (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
               auxX--;
               auxY--;
           }
@@ -235,8 +277,9 @@ public class Tabuleiro extends Observable {
           auxY = y + 1;
           
           while (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
               auxX++;
               auxY++;
           }
@@ -246,8 +289,9 @@ public class Tabuleiro extends Observable {
           auxY = y + 1;
           
           while (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
               auxX--;
               auxY++;
           }
@@ -262,7 +306,8 @@ public class Tabuleiro extends Observable {
      * @return
      * @throws ArrayIndexOutOfBoundsException 
      */
-    public Collection<Point> getCasasAcessiveisDiretamente(int x, int y)
+    public Collection<Coordenada> getCasasAcessiveisDiretamente(int x, int y)
+            throws ArrayIndexOutOfBoundsException
     {
           // Valida se está dentro dos limites
           if ( !validaLimites(x, y) ) {
@@ -270,18 +315,18 @@ public class Tabuleiro extends Observable {
           }
           
 //          Obtém as casas na mesma fileira
-          Collection<Point> fileira = getCasasFileira(x, y);
+          Collection<Coordenada> fileira = getCasasFileira(x, y);
           
 //          Obtém as casas na mesma coluna          
-          Collection<Point> coluna = getCasasColuna(x, y);
+          Collection<Coordenada> coluna = getCasasColuna(x, y);
           
 //          Obtém as casas nas mesmas diagonais          
-          Collection<Point> diagonal = getCasasDiagonais(x, y);
+          Collection<Coordenada> diagonal = getCasasDiagonais(x, y);
            
 //          Cria uma fila de coordenadas com no máximo 30 elementos
-          Collection<Point> totalCasas = new ArrayList<>(30);
+          Collection<Coordenada> totalCasas = new ArrayList<>(30);
                     
-//          Junta todas as casas em uma única fila
+//          Junta todas as casas
           totalCasas.addAll(fileira);
           totalCasas.addAll(coluna);
           totalCasas.addAll(diagonal);
@@ -290,13 +335,15 @@ public class Tabuleiro extends Observable {
     }
     
     /**
-     * 
-     * @param x
-     * @param y
-     * @return
-     * @throws ArrayIndexOutOfBoundsException 
+     * Verifica quais casas do tabuleiro estão acessíveis a um cavalo na coordenada (x, y)
+     * @param x A fileira que será verificada
+     * @param y A coluna que será verificada
+     * @return Uma Collection com todas as casas acessíveis a um cavalo
+     * @throws ArrayIndexOutOfBoundsException Se x o y forem negativos ou maiores que 
+     *      Xadrez_Fileiras.OITAVA ou Xadrez_Colunas._H
      */
-    public Collection<Point> getCasasAcessiveisIndiretamente(int x, int y)
+    public Collection<Coordenada> getCasasAcessiveisPorCavalo(int x, int y)
+            throws ArrayIndexOutOfBoundsException
     {
           // Valida se está dentro dos limites
           if ( !validaLimites(x, y) ) {
@@ -304,10 +351,10 @@ public class Tabuleiro extends Observable {
           }
           
 //          Cria uma fila de coordenadas com no máximo 8 elementos
-          Collection<Point> lista = new ArrayList<>(8);
+          ArrayList<Coordenada> lista = new ArrayList<>(8);
           
 //          Guarda um par de coordenadas em um ponto
-          Point p = new Point();
+          Coordenada c = new Coordenada();
           
           // Obtém as casas em sentido anti-horário
           
@@ -315,74 +362,355 @@ public class Tabuleiro extends Observable {
           int auxX = x + 2;
           int auxY = y - 1;
           
-          if (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+          if ( validaLimites(auxX, auxY) ){
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
           }
           
           auxX = x + 1;
           auxY = y - 2;
           
-          if (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+          if ( validaLimites(auxX, auxY) ){
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
           }
           
           // abaixo e à esquerda          
           auxX = x - 1;
           auxY = y - 2;
           
-          if (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+          if ( validaLimites(auxX, auxY) ){
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
           }
           
           auxX = x - 2;
           auxY = y - 1;
           
-          if (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+          if ( validaLimites(auxX, auxY) ){
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
           }
           
           // abaixo e à direita
           auxX = x - 2;
           auxY = y + 1;
           
-          if (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+          if ( validaLimites(auxX, auxY) ){
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
           }
           
           auxX = x - 1;
           auxY = y + 2;
           
-          if (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+          if ( validaLimites(auxX, auxY) ){
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
           }
           
           // acima e à direita
           auxX = x + 1;
           auxY = y + 2;
           
-          if (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+          if ( validaLimites(auxX, auxY) ){
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
           }
           
           auxX = x + 2;
           auxY = y + 1;
           
-          if (validaLimites(auxX, auxY)){
-              p.setLocation(auxX, auxY);
-              lista.add(p);
+          if ( validaLimites(auxX, auxY) ){
+              c.setX(auxX);
+              c.setY(auxY);
+              lista.add(c);
           }            
                     
           return lista;
     }
     
+    public Peao criaPeao(){
+        return new Peao();
+    }
     
+    
+    /**
+     * Recebe o código de uma peça e decrementa o seu respectivo contador em uma unidade.
+     * Este método deve ser usado quando uma peça for retirada do jogo; entretanto, não deve
+     * ser usado diretamente quando um peão é promovido. Clientes devem usar o método promoverPeao,
+     * que chamará este método
+     * @param id_peca
+     * @throws NullPointerException 
+     */
+    public Coordenada removePeca(Peca peca)
+            throws NullPointerException
+    {
+        if (peca == null){
+            throw new NullPointerException("Não há uma peça para remover");
+        }
+        
+        Iterator<Casa> iterator = mapa.keySet().iterator();
+        Coordenada coord = peca.getCoord();
+        Casa c;
+        
+        while ( iterator.hasNext() ) {
+            c = iterator.next();
+            
+            if ( coord.equals( c.getCoordenada() ) ){
+                mapa.replace(c, peca, null);
+                break;
+            }            
+        }
+        
+        return coord;
+    }
+    
+    /**
+     *
+     * @param pecaNova
+     * @param posNova
+     * @throws IllegalArgumentException
+     * @throws JogadaIlegalException
+     */
+    public void movimentaPeca(Peca pecaNova, Coordenada posNova)
+            throws NullPointerException, JogadaIlegalException
+    {
+        if (pecaNova == null || posNova == null){
+            throw new IllegalArgumentException("Não é possível movimentar a peça");
+        }
+        
+        Iterator<Casa> iterator = mapa.keySet().iterator();
+        Coordenada posAtual = pecaNova.getCoord();
+        Casa c;
+        
+        while ( iterator.hasNext() ) {
+            c = iterator.next();
+            
+            if ( posNova.equals( c.getCoordenada() ) ){
+                Peca pecaCapturada = mapa.get(c);
+                
+                if (pecaCapturada == null){
+                    mapa.put(c, pecaNova);
+                } else {
+                    if ( pecaCapturada.getCorJogador() == pecaNova.getCorJogador() ){
+                        throw new JogadaIlegalException("Você não pode capturar sua própria peça");
+                    } else {
+                        removePeca(pecaCapturada);
+                        mapa.replace(c, null, pecaNova);
+                        
+                        Iterator<Casa> it = mapa.keySet().iterator();
+                        
+                        while ( it.hasNext() ) {
+                            c = it.next();
+                            
+                            if ( posAtual.equals( c.getCoordenada() ) ){
+                                mapa.replace(c, pecaNova, null);
+                            }
+                            
+                        }
+                        
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    public void movimentar(Coordenada origem, Coordenada destino){
+        
+    }
+    
+    /**
+     *
+     * @param peao
+     * @param idPeca
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public Peca promoverPeao(Peao peao, int idPeca)
+            throws IllegalArgumentException
+    {
+        if (peao == null || idPeca == Xadrez_Pecas.PEAO || idPeca == Xadrez_Pecas.REI){
+            throw new IllegalArgumentException();
+        }
+        
+        Iterator<Casa> iterator = mapa.keySet().iterator();
+        Coordenada coord = peao.getCoord();
+        int cor = peao.getCorJogador();
+        Casa c = null;
+        
+        while ( iterator.hasNext() ) {
+            c =  iterator.next();
+            
+            if ( coord.equals( c.getCoordenada() ) ){
+                mapa.replace(c, peao, null);
+            }            
+        }
+        
+        Peca peca = null;
+        
+        switch (idPeca){
+            case Xadrez_Pecas.DAMA:
+                peca = new Dama();
+            break;
+            
+            case Xadrez_Pecas.TORRE:
+                peca = new Torre();
+            break;
+            
+            case Xadrez_Pecas.CAVALO:
+                peca = new Cavalo();
+            break;
+            
+            case Xadrez_Pecas.BISPO:
+                peca = new Bispo();
+            break;
+        }
+        
+        peca.setCoord(coord);
+        peca.setCorJogador(cor);
+        mapa.replace(c, null, peca);
+        
+        return peca;
+    }
+    
+    /**
+     * Quantos bispos este jogador tem
+     * @return A quantidade de bispos
+     */
+    public int getNumBispos(int cor) {
+        Iterator<Peca> iterator = mapa.values().iterator();
+        Peca p;
+        int cont = 0;
+        
+        while ( iterator.hasNext() ) {
+            if( ( p = iterator.next() ) instanceof Bispo && p.getCorJogador() == cor ){
+                cont++;
+            }
+        }
+        
+        return cont;
+    }
+
+    /**
+     * Quantos cavalos este jogador tem
+     * @return A quantidade de cavalos
+     */
+    public int getNumCavalos(int cor) {
+        Iterator<Peca> iterator = mapa.values().iterator();
+        Peca p;
+        int cont = 0;
+        
+        while ( iterator.hasNext() ) {
+            if( ( p = iterator.next() ) instanceof Cavalo && p.getCorJogador() == cor ){
+                cont++;
+            }
+        }
+        
+        return cont;
+    }
+
+    /**
+     * Quantas damas este jogador tem
+     * @return A quantidade de damas
+     */
+    public int getNumDamas(int cor) {
+        Iterator<Peca> iterator = mapa.values().iterator();
+        Peca p;
+        int cont = 0;
+        
+        while ( iterator.hasNext() ) {
+            if( ( p = iterator.next() ) instanceof Dama && p.getCorJogador() == cor ){
+                cont++;
+            }
+        }
+        
+        return cont;
+    }
+
+    /**
+     * Quantos peões este jogador tem
+     * @return A quantidade de peões
+     */
+    public int getNumPeoes(int cor) {
+        Iterator<Peca> iterator = mapa.values().iterator();
+        Peca p;
+        int cont = 0;
+        
+        while ( iterator.hasNext() ) {
+            if( ( p = iterator.next() ) instanceof Peao && p.getCorJogador() == cor ){
+                cont++;
+            }
+        }
+        
+        return cont;
+    }
+
+    /**
+     * Quantas torres este jogador tem
+     * @return A quantidade de torres
+     */
+    public int getNumTorres(int cor) {
+        Iterator<Peca> iterator = mapa.values().iterator();
+        Peca p;
+        int cont = 0;
+        
+        while ( iterator.hasNext() ) {
+            if( ( p = iterator.next() ) instanceof Torre && p.getCorJogador() == cor ){
+                cont++;
+            }
+        }
+        
+        return cont;
+    }
+
+    /**
+     * Quantos reis este jogador tem
+     * @return A quantidade de reis
+     */
+    public int getNumReis(int cor) {        
+        return 1;
+    }
+
+    /**
+     * Quantas peças este jogador tem
+     * @return A quantidade de peças
+     */
+    public int getNumPecas(int cor) {
+        Iterator<Peca> iterator = mapa.values().iterator();
+        int cont = 0;
+        
+        while ( iterator.hasNext() ) {
+            if( iterator.next().getCorJogador() == cor ){
+                cont++;
+            }
+        }
+        
+        return cont;
+    }
+    
+    /**
+     * Verifica se este jogador tem peças suficientes para continuar jogando.
+     * Este método pode ser usado para verificar condições de empate por falta de material.
+     * Além disso, se este jogador não tem material suficiente, mas o outro tem, é um indicativo
+     * de que será derrotado em breve ou de que deveria desistir da partida.
+     * 
+     * @return true se este jogador tem material suficiente, do contrário false.
+     */
+    public boolean temPecasSuficientes(){
+        return (numPeoes > 0) ||
+               (numDamas > 0) ||
+               (numTorres > 0) ||
+               ( numCavalos > 0 && numBispos > 0 );
+    }
     
     
     

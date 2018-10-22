@@ -11,18 +11,15 @@ package model;
  * @author ricardobalduino
  */
 public final class Casa {
+    
     /**
      *
      */
-    public final int X;
+    private final Coordenada coord;
     /**
      *
      */
-    public final int Y;
-    /**
-     *
-     */
-    public final int COR;
+    private final int COR;
 
     /**
      *
@@ -31,9 +28,42 @@ public final class Casa {
      * @param cor
      */
     public Casa(int x, int y, int cor) {
-        this.X = x;
-        this.Y = y;
-        this.COR = cor;
+        coord = new Coordenada();
+        
+        coord.setX(x);
+        coord.setY(y);
+        COR = cor;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getX(){
+        return coord.getX();
     }
     
+    /**
+     *
+     * @return
+     */
+    public int getY(){
+        return coord.getY();
+    }
+    
+    /**
+     *
+     * @return
+     */
+    public Coordenada getCoordenada(){
+        return coord;
+    }
+    
+    /**
+     *
+     * @return
+     */
+    public int getCor() {
+        return COR;
+    }    
 }

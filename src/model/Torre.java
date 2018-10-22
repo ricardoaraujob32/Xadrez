@@ -10,63 +10,46 @@ package model;
  *
  * @author ricardobalduino
  */
-public class Torre extends PecaComPrimeiroMovimento implements IPodeFazerRoque {
-
-    /**
-     *
-     * @param x
-     * @param y
-     * @param id_jogador
-     */
-    public Torre(int x, int y, int id_jogador)
-    {
-        super(x, y, id_jogador);
-    }
+public class Torre extends PecaQuePodeFazerRoque {
       
     @Override
     public void movimentar(int x, int y)
     {
-        super.movimentar(x, y);
-        
-        if ( isPrimeiroMovimento() ){
-            setNotPrimeiroMovimento();
+        if ( validaMovimento(x, y) ) {
+            super.movimentar(x, y);
+
+            if ( isPrimeiroMovimento() ) {
+                setNaoEhPrimeiroMovimento();
+            }
+            
+            if ( !isFezRoque() && isPodeFazerRoque() ){
+                setNaoPodeFazerRoque();
+            }
         }
     }
 
     @Override
     public boolean validaMovimento(int x, int y) {
-        boolean valido = true;
-
-//      se a peça tentar se mover para fora do tabuleiro
-        if ( !t.validaLimites(x, y) ){
-            valido = false;
-//            throw new ArrayIndexOutOfBoundsException("Tentou movimentar para fora do tabuleiro.");
-        }
-        
-        // se a torre tentar se mover em diagonal
-        if (x != this.x && y != this.y){
-            valido = false;
-//            throw new JogadaIlegalException("Uma torre não pode se mover em diagonal.");
-        }
-        
-        return valido;
+        return t.validaLimites(x, y) && !moveuEmDiagonal(x, y);
     }
 
     @Override
-    public void roque() throws JogadaIlegalException {
-        if ( !podeFazerRoque() ){
-            throw new JogadaIlegalException("A torre já foi movida uma vez!");
-        }
+    public void roque(int x, int y) {
+        coord.setY(y);
+        setFezRoque();
+        setNaoPodeFazerRoque();
         
-        if ( y == Xadrez_Colunas.A ){
-            setY( Xadrez_Colunas.D );
-        } else {
-            setY( Xadrez_Colunas.F );
+        if ( isPrimeiroMovimento() ){
+            setNaoEhPrimeiroMovimento();
         }
     }
 
     @Override
     public boolean podeFazerRoque() {
-        return isPrimeiroMovimento();
+        return isPrimeiroMovimento() && !isFezRoque() && isPodeFazerRoque();
+    }
+    
+    private boolean moveuEmDiagonal(int x, int y){
+        return x != coord.getX() && y != coord.getY();
     }
 }

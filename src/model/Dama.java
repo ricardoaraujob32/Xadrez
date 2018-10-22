@@ -6,10 +6,7 @@
 
 package model;
 
-import java.awt.Point;
-import java.util.Collection;
-import java.util.NoSuchElementException;
-import java.util.Queue;
+import java.util.Iterator;
 
 /**
  *
@@ -19,48 +16,29 @@ public class Dama extends Peca {
 
     /**
      * 
-     * @param x
-     * @param y
-     * @param id_jogador 
-     */
-    
-    public Dama(int x, int y, int id_jogador)
-    {
-        super(x, y, id_jogador);
-    } 
-
-    /**
-     * 
      * @param destX
      * @param destY
      * @return 
      */
-    
     @Override
     public boolean validaMovimento(int destX, int destY) {
         if ( !t.validaLimites(destX, destY) ){
             return false;
-        }
-        
-        // obtém lista de casas possíveis para se mover
-        Collection<Point> collection = t.getCasasAcessiveisDiretamente(this.x, this.y);
-        Point p = new Point();
-        
-        while ( !collection.isEmpty() ) {            
-            try {
-                p = collection.remove;
-                
+        } else {
+            // obtém lista de casas possíveis para se mover
+            Iterator<Coordenada> iterator = t.getCasasAcessiveisDiretamente( coord.getX(), coord.getY() ).iterator();
+            Coordenada c;
+
+            while ( iterator.hasNext() ) {
+                c = iterator.next();
+
                 // se foi a escolhida, posiciona a peça lá
-                if ( p.getX() == destX && p.getY() == destY ) {
-                    return true; 
+                if ( c.getX() == destX && c.getY() == destY ) {
+                    return true;
                 }
-            } catch (NoSuchElementException e) {
-                e.printStackTrace();
             }
         }
-         
+                 
         return false;
-        // Se não for uma casa válida, informar o erro
-//        throw new JogadaIlegalException("A dama não pode se mover para esta casa.");
     }
 }

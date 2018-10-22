@@ -11,10 +11,13 @@ package model;
  * @author ricardobalduino
  */
 public class Peao extends PecaComPrimeiroMovimento {
+    
     /**
      * 
      */
     private boolean andouDuasCasas;
+    
+    private int deslocamento;
 
     /**
      *
@@ -22,10 +25,9 @@ public class Peao extends PecaComPrimeiroMovimento {
      * @param y
      * @param id_jogador
      */
-    public Peao(int x, int y, int id_jogador)
+    public Peao()
     {
-        super(x, y, id_jogador);
-        this.andouDuasCasas = false;
+        andouDuasCasas = false;
     }
 
     /**
@@ -40,118 +42,108 @@ public class Peao extends PecaComPrimeiroMovimento {
      * @return
      */
     public boolean andouDuasCasas(){
-        return this.andouDuasCasas;
+        return andouDuasCasas;
     }
 
-//    @Override
-//    public void movimentar(int x, int y) 
-//            throws ArrayIndexOutOfBoundsException, JogadaIlegalException
-//    {
-//       super.movimentar(x, y);
-//       
-//       //        se é o primeiro movimento
-//       if ( primeiroMovimento ){
-//           setNotPrimeiroMovimento();
-//           
-////            se andou duas casas
-//           if (desloc == 2){
-//               setAndouDuasCasas();
-//           }
-//       }
-//    }
+    @Override
+    public void movimentar(int x, int y) {
+        if ( validaMovimento(x, y) ) {
+            super.movimentar(x, y);
 
-    public boolean validaCaptura(int x, int y) 
+            if ( isPrimeiroMovimento() ) {
+                setNaoEhPrimeiroMovimento();
+
+                if ( deslocamento == 2 || deslocamento == -2) {
+                    setAndouDuasCasas();
+                }
+            }
+        }
+    }
+
+    public boolean validaCaptura(int destX, int destY) 
     {
-       boolean valido = true;
-        
-       // se a peça tentar se mover para fora do tabuleiro
-       if ( !t.validaLimites(x, y) ){
-           valido = false;
-//           throw new ArrayIndexOutOfBoundsException("Tentou movimentar a peça para fora do tabuleiro.");
+       if ( !t.validaLimites(destX, destY) || tentouMovimentarParaTras(destX) ){
+           return false;
        }
        
-       // se o peão tentar se movimentar para trás
-       if (ID_JOGADOR == Xadrez_Cores.BRANCA && x < this.x ||
-               ID_JOGADOR == Xadrez_Cores.PRETA && x > this.x){
-           valido = false;
-//           throw new JogadaIlegalException("Um peão não pode capturar para trás.");
-       }
-       
-       int deslocX, deslocY;
-       
-       if (ID_JOGADOR == Xadrez_Cores.BRANCA){
-           deslocX = x - this.x;
-       } else {
-           deslocX = this.x - x;
-       }
-       
-       deslocY = y - this.y;
-       
-       if (deslocX != 1 || deslocY != 1 || deslocY != -1){
-           valido = false;
-//           throw new JogadaIlegalException("Um peão só pode capturar uma peça adjacente em diagonal.");
-       }
-       
-       return valido;
-       
-               
+       int deslocX = calculaDeslocamento(destX, "x");
+       int deslocY = calculaDeslocamento(destY, "y");
+              
+       return validaDeslocamento(deslocX) && validaDeslocamento(deslocY);
     }
     
     public void capturar(int x, int y){
         if ( validaCaptura(x, y) ){
-            setX(x);
-            setY(y);
+            coord.setX(x);
+            coord.setY(y);
             
-//             se é o primeiro movimento
             if ( isPrimeiroMovimento() ){
-                setNotPrimeiroMovimento();
+                setNaoEhPrimeiroMovimento();
             }
-       
-//        anuncia a mudança para os observadores
-            setChanged();
         }
     }
 
+    /**
+     *
+     * @param destX
+     * @param destY
+     * @return
+     */
     @Override
     public boolean validaMovimento(int destX, int destY) {
-        boolean valido = true;
+        int deslocY = calculaDeslocamento(destY, "y");
+        boolean mudouDeColuna = deslocY != 0;
 
-//        se a peça tentar se mover para fora do tabuleiro
-       if (!t.validaLimites(destX, destY)){
-           valido = false;
-//           throw new ArrayIndexOutOfBoundsException("Tentou movimentar a peça para fora do tabuleiro.");
-       }
-              
-//        se o peão tentar mudar de coluna
-       if (destY != y){
-           valido = false;
-//           throw new JogadaIlegalException("Um peão deve se mover na mesma coluna em que começou.");
-       }
-       
-//        se o peão tentar se movimentar para trás
-       if (ID_JOGADOR == Xadrez_Cores.BRANCA && destX < x ||
-               ID_JOGADOR == Xadrez_Cores.PRETA && destX > x){
-           valido = false;
-//           throw new JogadaIlegalException("Um peão não pode se mover para trás.");
-       }      
-       
-       int desloc;
-       
-       if (ID_JOGADOR == Xadrez_Cores.BRANCA){
-           desloc = destX - x;
-       } else {
-           desloc = x - destX;
-       }
-       
-//        se o deslocamento for maior do que o permitido
-       if (desloc != 1 || desloc != 2){
-           valido = false;
-//           throw new JogadaIlegalException("Um peão não pode andar mais do que 2 casas.");
-       } else if ( desloc == 2 && !isPrimeiroMovimento() ){
-           valido = false;
-//           throw new JogadaIlegalException("Um peão só pode andar 2 casas no primeiro movimento.");
-       }
-       
-       return valido;
+        if ( !t.validaLimites(destX, destY) || mudouDeColuna || tentouMovimentarParaTras(destX) ) {
+            return false;
+        }
+
+        int deslocX = calculaDeslocamento(destX, "x");
+
+        if (!validaDeslocamento(deslocX)) {
+            return false;
+        }
+
+        deslocamento = deslocX;
+
+        return true;
+    }
+    
+    /**
+     * se o peão tentar se movimentar para trás
+     * @param x
+     * @return 
+     */
+    private boolean tentouMovimentarParaTras(int x){
+        boolean valida;
+        
+        if ( isBranca() ){
+            valida = x < coord.getX();
+        } else {
+            valida = x > coord.getX();
+        }
+        
+        return valida;
+    }
+    
+    private int calculaDeslocamento(int n, String dir){
+        return "x".equals(dir) ? n - coord.getX() : 
+                    "y".equals(dir) ? n - coord.getY() : 0;
+    }
+    
+    private boolean validaDeslocamento(int desloc){
+        boolean valida = true;
+        
+        if (desloc > 2 || desloc < -2){
+            valida = false;
+        } else if ( isBranca() && desloc <= 0){
+            valida = false;
+        } else if ( isPreta() && desloc >= 0){
+            valida = false;
+        } else if ( isPrimeiroMovimento() && (desloc == 2 || desloc == -2) ){
+            valida = false;
+        }
+        
+        return valida;
     }
 }

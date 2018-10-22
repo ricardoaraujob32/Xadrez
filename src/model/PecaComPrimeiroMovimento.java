@@ -15,29 +15,23 @@ package model;
  * @since 1.0.0.0
  */
 public abstract class PecaComPrimeiroMovimento extends Peca {
+   
     /**
      * Indica se esta peça já foi movida alguma vez
      */
-    
     private boolean primeiroMovimento;
     
     /**
      * 
-     * @param x
-     * @param y
-     * @param id_jogador 
      */
-    
-    public PecaComPrimeiroMovimento(int x, int y, int id_jogador) {
-        super(x, y, id_jogador);
+    public PecaComPrimeiroMovimento() {
         primeiroMovimento = true;
     }
 
     /**
      * 
      */
-    
-    public void setNotPrimeiroMovimento() {
+    public void setNaoEhPrimeiroMovimento() {
         primeiroMovimento = false;
     }
 
@@ -45,7 +39,6 @@ public abstract class PecaComPrimeiroMovimento extends Peca {
      * 
      * @return 
      */
-    
     public boolean isPrimeiroMovimento() {
         return primeiroMovimento;
     }

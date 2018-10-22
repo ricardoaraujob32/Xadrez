@@ -3,14 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package model;
 
 /**
  *
  * @author ricardobalduino
  */
-public interface IPodeFazerRoque {
-    public void roque() throws JogadaIlegalException;
-    public boolean podeFazerRoque();
+public class TesteCasasAcssiveisDiretamente {
+    
 }
