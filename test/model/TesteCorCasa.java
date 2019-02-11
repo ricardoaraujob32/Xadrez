@@ -5,6 +5,9 @@
  */
 package model;
 
+import com.wordpress.ricardoanalistadesistemas.xadrez.model.Xadrez_Colunas;
+import com.wordpress.ricardoanalistadesistemas.xadrez.model.Xadrez_Fileiras;
+
 /**
  *
  * @author ricardobalduino

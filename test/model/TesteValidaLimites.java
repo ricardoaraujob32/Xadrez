@@ -5,6 +5,8 @@
  */
 package model;
 
+import com.wordpress.ricardoanalistadesistemas.xadrez.model.Xadrez_Colunas;
+import com.wordpress.ricardoanalistadesistemas.xadrez.model.Xadrez_Fileiras;
 import java.util.Random;
 import org.junit.Assert;
 
